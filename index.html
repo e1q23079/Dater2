@@ -30,6 +30,12 @@
       th:nth-child(1), td:nth-child(1) {
         color: red;
       }
+      .ok{
+        background-color: lightgreen;
+      }
+      .ng{
+        background-color: lightcoral;
+      }
     </style>
   </head>
   <body>
@@ -51,7 +57,7 @@
         <? for (let i = 0; i < calendar.length; i++) { ?>
           <tr>
             <? for (let j = 0; j < calendar[i].length; j++) { ?>
-              <td><?= calendar[i][j] ? calendar[i][j].getDate() : '' ?></td>
+              <td class="<?= calendar[i][j] ? calendar[i][j].status : '' ?>"><?= calendar[i][j] ? calendar[i][j].date.getDate() : '' ?></td>
             <? } ?>
           </tr>
         <? } ?>

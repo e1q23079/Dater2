@@ -1,5 +1,7 @@
 // カレンダーIDを取得
 const calendarId = PropertiesService.getScriptProperties().getProperty("CALENDAR_ID");
+// カレンダーを取得
+const calendar = CalendarApp.getCalendarById(calendarId);
 
 // 現在のURLを取得
 const getNowUrl = () => {
@@ -9,7 +11,6 @@ const getNowUrl = () => {
 
 // カレンダーにアクセスできるか確認
 const isAccessCalendar = () => {
-  const calendar = CalendarApp.getCalendarById(calendarId);
   if (!calendar) {
     return false;
   }
@@ -18,24 +19,10 @@ const isAccessCalendar = () => {
 
 // カレンダーを取得
 const getGCalendar = () => {
-  const calendar = CalendarApp.getCalendarById(calendarId);
   if (!calendar) {
     return null;
   }
   return calendar;
-}
-
-// カレンダーからイベントを取得
-const getCalendarEvents = (year, month) => {
-  const calendar = CalendarApp.getCalendarById(calendarId);
-  const startDate = new Date(year, month - 1, 1);
-  const endDate = new Date(year, month, 1);
-  const events = calendar.getEvents(startDate, endDate);
-  return events.map(event => ({
-    title: event.getTitle(),
-    startTime: event.getStartTime(),
-    endTime: event.getEndTime()
-  }));
 }
 
 // カレンダーのデータを生成
@@ -49,7 +36,10 @@ const getCalendar = (year, month) => {
     currentWeek.push(null);
   }
   for (let date = new Date(startDate); date < endDate; date.setDate(date.getDate() + 1)) {
-    currentWeek.push(new Date(date));
+    currentWeek.push({
+      date: new Date(date),
+      status : getGCalendar() ? (getGCalendar().getEventsForDay(date).length > 0 ? "ng" : "ok") : ""
+    });
     if (currentWeek.length === 7) {
       calendar.push(currentWeek);
       currentWeek = [];
@@ -84,7 +74,7 @@ const doGet = (e) => {
   template.prevUrl = `${getNowUrl()}?year=${month === 1 ? year - 1 : year}&month=${month === 1 ? 12 : month - 1}`;
   template.nextUrl = `${getNowUrl()}?year=${month === 12 ? year + 1 : year}&month=${month === 12 ? 1 : month + 1}`;
   
-  template.calendarName = getGCalendar().getName();
+  template.calendarName = getGCalendar() ? getGCalendar().getName() : "カレンダーが見つかりません";
 
   const html = template.evaluate();
   html.setTitle(`Dater2 App - ${template.calendarName}`);
