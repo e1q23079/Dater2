@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dater2 App</title>
+    <base target="_top">
+    <style>
+      body {
+        padding: 10px;
+        background-color: azure;
+        text-align: center;
+      }
+      th, td{
+        width: 14.2%;
+        height: 50px;
+        text-align: center;
+        vertical-align: middle;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th, td {
+        border: 1px solid black;
+      }
+      th:nth-child(7), td:nth-child(7) {
+        color: blue;
+      }
+      th:nth-child(1), td:nth-child(1) {
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Dater2 App</h1>
+    <h2><?= year ?> 年  <?= month ?> 月</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>日</th>
+          <th>月</th>
+          <th>火</th>
+          <th>水</th>
+          <th>木</th>
+          <th>金</th>
+          <th>土</th>
+        </tr>
+      </thead>
+      <tbody>
+        <? for (let i = 0; i < calendar.length; i++) { ?>
+          <tr>
+            <? for (let j = 0; j < calendar[i].length; j++) { ?>
+              <td><?= calendar[i][j] ? calendar[i][j].getDate() : '' ?></td>
+            <? } ?>
+          </tr>
+        <? } ?>
+      </tbody>
+    </table>
+    <p>
+      <a href="<?= prevUrl ?>">前の月</a> | <a href="<?= nextUrl ?>">次の月</a>
+    </p>
+  </body>
+</html>
