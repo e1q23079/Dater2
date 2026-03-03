@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dater2 App</title>
+    <base target="_top">
+    <style>
+      body {
+        padding: 10px;
+        background-color: azure;
+        text-align: center;
+      }
+      th, td{
+        width: 14.2%;
+        height: 50px;
+        text-align: center;
+        vertical-align: middle;
+      }
+      th {
+        background-color: lightgray;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th, td {
+        border: 1px solid black;
+      }
+      .ok{
+        background-color: lightgreen;
+      }
+      .ng{
+        background-color: lightsalmon
+      }
+    </style>
+  </head>
+  <body>
+    <h1><?= calendarName ?></h1>
+    <h2><?= year ?> 年  <?= month ?> 月 <?= day ?></h2>
+    <table>
+      <thead>
+        <tr>
+          <th>時間</th>
+          <th>予定</th>
+        </tr>
+      </thead>
+      <tbody>
+        <? for (let i = 0; i < timeTable.length; i++) { ?>
+          <tr>
+            <td><?= timeTable[i].hour ?></td>
+            <td class="<?= timeTable[i].status ?>"><?= timeTable[i].status === "ok" ? "空き" : "予定あり" ?></td>
+          </tr>
+        <? } ?>
+      </tbody>
+    </table>
+    <p>
+      <a href="<?= prevUrl ?>">前の日</a> | <a href="<?= nextUrl ?>">次の日</a>
+    </p>
+  </body>
+</html>
