@@ -16,6 +16,15 @@ const isAccessCalendar = () => {
   return true;
 }
 
+// カレンダーを取得
+const getGCalendar = () => {
+  const calendar = CalendarApp.getCalendarById(calendarId);
+  if (!calendar) {
+    return null;
+  }
+  return calendar;
+}
+
 // カレンダーからイベントを取得
 const getCalendarEvents = (year, month) => {
   const calendar = CalendarApp.getCalendarById(calendarId);
@@ -75,8 +84,10 @@ const doGet = (e) => {
   template.prevUrl = `${getNowUrl()}?year=${month === 1 ? year - 1 : year}&month=${month === 1 ? 12 : month - 1}`;
   template.nextUrl = `${getNowUrl()}?year=${month === 12 ? year + 1 : year}&month=${month === 12 ? 1 : month + 1}`;
   
+  template.calendarName = getGCalendar().getName();
+
   const html = template.evaluate();
-  html.setTitle("Dater2 App");
+  html.setTitle(`Dater2 App - ${template.calendarName}`);
   html.addMetaTag("viewport", "width=device-width, initial-scale=1");
   return html;
 }
