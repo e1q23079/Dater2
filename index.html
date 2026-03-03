@@ -39,6 +39,15 @@
       .ng{
         background-color: lightsalmon
       }
+      td a{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+      }
     </style>
   </head>
   <body>
@@ -60,7 +69,11 @@
         <? for (let i = 0; i < calendar.length; i++) { ?>
           <tr>
             <? for (let j = 0; j < calendar[i].length; j++) { ?>
-              <td class="<?= calendar[i][j] ? calendar[i][j].status : '' ?>"><?= calendar[i][j] ? calendar[i][j].date.getDate() : '' ?></td>
+                <td class="<?= calendar[i][j] ? calendar[i][j].status : '' ?>">
+                  <a href="<?= getNowUrl() ?>?year=<?= year ?>&month=<?= month ?>&day=<?= calendar[i][j] ? calendar[i][j].date.getDate() : '' ?>" title="詳細">
+                    <?= calendar[i][j] ? calendar[i][j].date.getDate() : '' ?>
+                  </a>
+                </td>
             <? } ?>
           </tr>
         <? } ?>
