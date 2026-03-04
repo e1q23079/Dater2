@@ -43,7 +43,8 @@ const getCalendar = (year, month) => {
   for (let date = new Date(startDate); date < endDate; date.setDate(date.getDate() + 1)) {
     currentWeek.push({
       date: new Date(date),
-      status : isEvents(date) ? "ng" : "ok"
+      status : isEvents(date) ? "ng" : "ok",
+      url: `${getNowUrl()}?page=list&year=${date.getFullYear()}&month=${date.getMonth() + 1}&day=${date.getDate()}`
     });
     if (currentWeek.length === 7) {
       calendar.push(currentWeek);
@@ -80,34 +81,65 @@ const getTimeTable = (year, month, day) => {
 }
 
 const doGet = (e) => {
+  // クエリパラメータからページを取得
+  let page = e.parameter.page;
+
   // クエリパラメータから年、月、日を取得
   const param = e.parameter;
   let year = parseInt(param.year, 10);
   let month = parseInt(param.month, 10);
   let day = parseInt(param.day, 10);
-  // 年、月、日が不正な場合は現在の年月日を使用
-  if(isNaN(year) || isNaN(month) || month < 1 || month > 12) {
-    const today = new Date();
-    year = today.getFullYear();
-    month = today.getMonth() + 1;
+
+  if(!page || page === "index") {
+    // ページが指定されていない場合はindex.htmlを表示
+    page = "index";
   }
 
-  const template = HtmlService.createTemplateFromFile(day ? "list" : "index");
+  // ページが指定されていない場合はindex.htmlを表示
+  const template = HtmlService.createTemplateFromFile(page);
 
-  template.calendar = getCalendar(year, month);
-  
+  if(page === "index") {
+
+    // 年、月、日が不正な場合は現在の年月日を使用
+    if(isNaN(year) || isNaN(month) || month < 1 || month > 12) {
+      const today = new Date();
+      year = today.getFullYear();
+      month = today.getMonth() + 1;
+    }
+
+    // カレンダーのデータを生成
+    template.calendar = getCalendar(year, month);
+
+    // 前の月と次の月のURLを生成
+    const prevDate = new Date(year, month - 2, 1);
+    const nextDate = new Date(year, month, 1);
+    template.prevUrl = `${getNowUrl()}?page=index&year=${prevDate.getFullYear()}&month=${prevDate.getMonth() + 1}`;
+    template.nextUrl = `${getNowUrl()}?page=index&year=${nextDate.getFullYear()}&month=${nextDate.getMonth() + 1}`;
+    
+  }else if(page === "list") {
+
+    // タイムテーブルのデータを生成
+    template.timeTable = getTimeTable(year, month, day);
+
+    // 前の日と次の日のURLを生成
+    const prevDay = new Date(year, month - 1, day - 1);
+    const nextDay = new Date(year, month - 1, day + 1);
+    template.prevUrl = `${getNowUrl()}?page=list&year=${prevDay.getFullYear()}&month=${prevDay.getMonth() + 1}&day=${prevDay.getDate()}`;
+    template.nextUrl = `${getNowUrl()}?page=list&year=${nextDay.getFullYear()}&month=${nextDay.getMonth() + 1}&day=${nextDay.getDate()}`;
+  }
+
+  // テンプレートに年、月、日を渡す
   template.year = year;
   template.month = month;
   template.day = day;
+  template.url = getNowUrl();
 
-  template.prevUrl = `${getNowUrl()}?year=${month === 1 ? year - 1 : year}&month=${month === 1 ? 12 : month - 1}`;
-  template.nextUrl = `${getNowUrl()}?year=${month === 12 ? year + 1 : year}&month=${month === 12 ? 1 : month + 1}`;
-  
+  // カレンダーの名前をテンプレートに渡す
   template.calendarName = getGCalendar() ? getGCalendar().getName() : "カレンダーが見つかりません";
 
-  template.timeTable = getTimeTable(year, month, day);
-
+  // テンプレートを評価してHTMLを生成
   const html = template.evaluate();
+  // タイトルとメタタグを設定
   html.setTitle(`Dater2 App - ${template.calendarName}`);
   html.addMetaTag("viewport", "width=device-width, initial-scale=1");
   return html;

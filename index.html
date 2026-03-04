@@ -81,7 +81,7 @@
           <tr>
             <? for (let j = 0; j < calendar[i].length; j++) { ?>
                 <td class="<?= calendar[i][j] ? calendar[i][j].status : '' ?>">
-                  <a href="<?= getNowUrl() ?>?year=<?= year ?>&month=<?= month ?>&day=<?= calendar[i][j] ? calendar[i][j].date.getDate() : '' ?>" title="詳細">
+                  <a href="<?= calendar[i][j] ? calendar[i][j].url : '' ?>" title="詳細">
                     <?= calendar[i][j] ? calendar[i][j].date.getDate() : '' ?>
                   </a>
                 </td>
