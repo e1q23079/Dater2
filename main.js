@@ -1,11 +1,11 @@
-// カレンダーIDを取得
-const calendarId = PropertiesService.getScriptProperties().getProperty("CALENDAR_ID");
-// カレンダーを取得
-const calendar = CalendarApp.getCalendarById(calendarId);
+// カレンダーID
+let calendarId = null;
+// カレンダー
+let calendar = null;
 
 // 現在のURLを取得
 const getNowUrl = () => {
-  const url = ScriptApp.getService().getUrl();
+  const url = `${ScriptApp.getService().getUrl()}?calendarId=${encodeURIComponent(calendarId)}`;
   return url;
 }
 
@@ -44,7 +44,7 @@ const getCalendar = (year, month) => {
     currentWeek.push({
       date: new Date(date),
       status : isEvents(date) ? "ng" : "ok",
-      url: `${getNowUrl()}?page=list&year=${date.getFullYear()}&month=${date.getMonth() + 1}&day=${date.getDate()}`
+      url: `${getNowUrl()}&page=list&year=${date.getFullYear()}&month=${date.getMonth() + 1}&day=${date.getDate()}`
     });
     if (currentWeek.length === 7) {
       calendar.push(currentWeek);
@@ -84,6 +84,14 @@ const doGet = (e) => {
   // クエリパラメータからページを取得
   let page = e.parameter.page;
 
+  // カレンダーIDを取得
+  calendarId = e.parameter.calendarId;
+  calendar = calendarId ? CalendarApp.getCalendarById(calendarId) : null;
+
+  if (!isAccessCalendar()) {
+    page = "error";
+  }
+
   // クエリパラメータから年、月、日を取得
   const param = e.parameter;
   let year = parseInt(param.year, 10);
@@ -113,8 +121,8 @@ const doGet = (e) => {
     // 前の月と次の月のURLを生成
     const prevDate = new Date(year, month - 2, 1);
     const nextDate = new Date(year, month, 1);
-    template.prevUrl = `${getNowUrl()}?page=index&year=${prevDate.getFullYear()}&month=${prevDate.getMonth() + 1}`;
-    template.nextUrl = `${getNowUrl()}?page=index&year=${nextDate.getFullYear()}&month=${nextDate.getMonth() + 1}`;
+    template.prevUrl = `${getNowUrl()}&page=index&year=${prevDate.getFullYear()}&month=${prevDate.getMonth() + 1}`;
+    template.nextUrl = `${getNowUrl()}&page=index&year=${nextDate.getFullYear()}&month=${nextDate.getMonth() + 1}`;
     
   }else if(page === "list") {
 
@@ -124,8 +132,11 @@ const doGet = (e) => {
     // 前の日と次の日のURLを生成
     const prevDay = new Date(year, month - 1, day - 1);
     const nextDay = new Date(year, month - 1, day + 1);
-    template.prevUrl = `${getNowUrl()}?page=list&year=${prevDay.getFullYear()}&month=${prevDay.getMonth() + 1}&day=${prevDay.getDate()}`;
-    template.nextUrl = `${getNowUrl()}?page=list&year=${nextDay.getFullYear()}&month=${nextDay.getMonth() + 1}&day=${nextDay.getDate()}`;
+    template.prevUrl = `${getNowUrl()}&page=list&year=${prevDay.getFullYear()}&month=${prevDay.getMonth() + 1}&day=${prevDay.getDate()}`;
+    template.nextUrl = `${getNowUrl()}&page=list&year=${nextDay.getFullYear()}&month=${nextDay.getMonth() + 1}&day=${nextDay.getDate()}`;
+  }else if(page === "error") {
+    // エラーページ
+    template.message = "カレンダーにアクセスできませんでした。カレンダーIDが正しいか確認してください。";
   }
 
   // テンプレートに年、月、日を渡す
