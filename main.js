@@ -136,6 +136,8 @@ const doGet = (e) => {
 
   // カレンダーの名前をテンプレートに渡す
   template.calendarName = getGCalendar() ? getGCalendar().getName() : "カレンダーが見つかりません";
+  // カレンダーの説明をテンプレートに渡す
+  template.description = getGCalendar() ? getGCalendar().getDescription() : null;
 
   // テンプレートを評価してHTMLを生成
   const html = template.evaluate();
