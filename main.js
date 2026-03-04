@@ -25,20 +25,25 @@ const getGCalendar = () => {
   return calendar;
 }
 
+// 予定があるかどうかを判定
+const isEvents = (date) => {
+  return getGCalendar() ? getGCalendar().getEventsForDay(date).length > 0 : false;
+}
+
 // カレンダーのデータを生成
 const getCalendar = (year, month) => {
   const startDate = new Date(year, month - 1, 1);
   const endDate = new Date(year, month, 1);
   const calendar = [];
   let currentWeek = [];
-  let firstDay = startDate.getDay();
+  const firstDay = startDate.getDay();
   for (let i = 0; i < firstDay; i++) {
     currentWeek.push(null);
   }
   for (let date = new Date(startDate); date < endDate; date.setDate(date.getDate() + 1)) {
     currentWeek.push({
       date: new Date(date),
-      status : getGCalendar() ? (getGCalendar().getEventsForDay(date).length > 0 ? "ng" : "ok") : ""
+      status : isEvents(date) ? "ng" : "ok"
     });
     if (currentWeek.length === 7) {
       calendar.push(currentWeek);
