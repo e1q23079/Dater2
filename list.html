@@ -49,7 +49,7 @@
         <? for (let i = 0; i < timeTable.length; i++) { ?>
           <tr>
             <td><?= timeTable[i].hour ?></td>
-            <td class="<?= timeTable[i].status ?>"><?= timeTable[i].status === "ok" ? "空き" : "予定あり" ?></td>
+            <td class="<?= timeTable[i].status ?>"><?= timeTable[i].status === "ok" ? "〇" : "×" ?></td>
           </tr>
         <? } ?>
       </tbody>
