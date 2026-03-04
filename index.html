@@ -48,6 +48,17 @@
         text-decoration: none;
         color: inherit;
       }
+      .legend {
+        margin-top: 10px;
+        text-align: left;
+      }
+      .legend span {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        margin-right: 5px;
+        vertical-align: middle;
+      }
     </style>
   </head>
   <body>
@@ -79,6 +90,10 @@
         <? } ?>
       </tbody>
     </table>
+    <div class="legend">
+      <span class="ok"></span>空き
+      <span class="ng"></span>予定あり
+    </div>
     <p>
       <a href="<?= prevUrl ?>">前の月</a> | <a href="<?= nextUrl ?>">次の月</a>
     </p>
